@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.os.Handler
 import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -96,7 +97,7 @@ class outdoorWorkOutLvl1_frag : Fragment() {
                 nameTextView.text = "Completed" // Set text to "Complete"
                 timerTextView.text = "Nice !"
                 getWorkout()
-                showPopup()
+
                 // Set image to check mark icon
                 // gifImageView.setImageResource(R.drawable.check_mark)
             } else {
@@ -254,41 +255,49 @@ class outdoorWorkOutLvl1_frag : Fragment() {
 
     private fun showPopup() {
         saveRecord()
-        val myDialog = Dialog(requireContext())
-        myDialog.setContentView(R.layout.popup_completed)
-        val txtclose = myDialog.findViewById<TextView>(R.id.txtclose)
-        val btnClose = myDialog.findViewById<Button>(R.id.btnClose)
+        println("POPUP INITIATED")
 
-        var workoutTypeDisplay: TextView = myDialog.findViewById(R.id.workoutType)
-        val caloriesBurnedDisplay: TextView = myDialog.findViewById(R.id.caloriesBurned)
-        val durationDisplay: TextView = myDialog.findViewById(R.id.duration)
+        Handler().postDelayed({
+            val myDialog = Dialog(requireContext())
+            myDialog.setContentView(R.layout.popup_completed)
+            val txtclose = myDialog.findViewById<TextView>(R.id.txtclose)
+            val btnClose = myDialog.findViewById<Button>(R.id.btnClose)
 
-        workoutTypeDisplay.text = workoutTypeGL
-        caloriesBurnedDisplay.text = caloriesBurnedGL.toString()
-        durationDisplay.text = durationGL.toString() + " Sec"
-        println("NOT CLOSE BTN CLICKED")
-        println("Workout Type: $workoutTypeGL")
-        println("Calories Burned: $caloriesBurnedGL")
-        println("Duration: $durationGL")
-        txtclose.setOnClickListener {
-            println("CLOSE BTN CLICKED")
+            var workoutTypeDisplay: TextView = myDialog.findViewById(R.id.workoutType)
+            val caloriesBurnedDisplay: TextView = myDialog.findViewById(R.id.caloriesBurned)
+            val durationDisplay: TextView = myDialog.findViewById(R.id.duration)
+
+            workoutTypeDisplay.text = workoutTypeGL
+            caloriesBurnedDisplay.text = caloriesBurnedGL.toString()
+            durationDisplay.text = durationGL.toString() + " Sec"
+            println("NOT CLOSE BTN CLICKED")
             println("Workout Type: $workoutTypeGL")
             println("Calories Burned: $caloriesBurnedGL")
             println("Duration: $durationGL")
-            myDialog.dismiss()
-            requireActivity().finish()
 
-        }
-
-        btnClose.setOnClickListener {
-            println("CLOSE BTN CLICKED")
-            myDialog.dismiss()
-            requireActivity().finish()
+            myDialog.setCancelable(false)
 
 
-        }
-        myDialog.window?.setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(requireContext(), android.R.color.transparent)))
-        myDialog.show()
+            txtclose.setOnClickListener {
+                println("CLOSE BTN CLICKED")
+                println("Workout Type: $workoutTypeGL")
+                println("Calories Burned: $caloriesBurnedGL")
+                println("Duration: $durationGL")
+                myDialog.dismiss()
+                requireActivity().finish()
+
+            }
+
+            btnClose.setOnClickListener {
+                println("CLOSE BTN CLICKED")
+                myDialog.dismiss()
+                requireActivity().finish()
+
+
+            }
+            myDialog.window?.setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(requireContext(), android.R.color.transparent)))
+            myDialog.show()
+        }, 500)
     }
 
     private fun saveRecord(){

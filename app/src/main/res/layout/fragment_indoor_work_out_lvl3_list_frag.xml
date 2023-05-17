@@ -35,7 +35,6 @@
                     android:id="@+id/topAppBar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    android:background="@color/purple_500"
                     android:elevation="4dp">
 
                     <ImageButton
@@ -54,7 +53,7 @@
                         android:layout_height="wrap_content"
                         android:text="Workout Page"
                         android:textStyle="italic"
-                        android:textColor="#C8C8C8"
+                        android:textColor="@color/colorPrimary"
                         android:textSize="27sp"
                         android:paddingLeft="10dp"
                         app:layout_constraintStart_toEndOf="@+id/imageButton4"
