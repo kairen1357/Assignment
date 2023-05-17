@@ -125,7 +125,7 @@ class FragmentSubFragmentWeeklyKcal : Fragment() {
         val totalKcal = workoutRecords.sumBy { it.caloriesBurnt!!.toInt() }.toFloat()
 
 
-        view?.findViewById<TextView>(R.id.total_kcal)!!.text= totalKcal.toString() + " Kcal"
+        binding.totalKcal.text= totalKcal.toString() + " Kcal"
 
         val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val daysOfWeek = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")

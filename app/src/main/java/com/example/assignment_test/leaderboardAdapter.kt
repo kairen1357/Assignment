@@ -19,8 +19,8 @@ class leaderboardAdapter(private val userList : ArrayList<User>) : RecyclerView.
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
 
         val currentItem = userList[position]
-
-        holder.ranking.text = currentItem.ranking.toString()
+        val ranking = position + 4
+        holder.ranking.text = ranking.toString()
         holder.name.text = currentItem.name
         holder.powerPlantScore.text = currentItem.powerPlantScore.toString()
 
