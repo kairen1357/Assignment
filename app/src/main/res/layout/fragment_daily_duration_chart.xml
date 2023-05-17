@@ -72,23 +72,5 @@
             android:textColor="?android:attr/textColorPrimary" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayout4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="@+id/viewPager1"
-        app:layout_constraintStart_toStartOf="@+id/viewPager1"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
-
-        <TextView
-            android:id="@+id/average_duration"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:textColor="?android:attr/textColorPrimary" />
-    </LinearLayout>
-
 
 </LinearLayout>

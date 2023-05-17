@@ -62,6 +62,8 @@ class FragmentSubFragmentYearlyKcal : Fragment() {
             val nextDate = textViewDate.plusMonths(1)
             if(nextDate <= currentDate){
                 updateDate(nextDate)
+                binding.linechart.clear()
+                setUpLineChart()
                 val changedTextView=binding.yearTextview.text.toString()
                 if(currentTextView == changedTextView)
                 {
@@ -75,6 +77,8 @@ class FragmentSubFragmentYearlyKcal : Fragment() {
             val prevDate= textViewDate.minusMonths(1)
             binding.rightButton.clearColorFilter()
             updateDate(prevDate)
+            binding.linechart.clear()
+            setUpLineChart()
         }
 
 
