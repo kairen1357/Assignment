@@ -13,25 +13,20 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/textView4"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_marginStart="20dp"
             android:layout_weight="1"
-            android:gravity="bottom"
-            android:text="@string/email"
-            android:textSize="30sp" />
+            android:gravity="bottom|left"
+            android:text="New Email Address"
+            android:textSize="24sp" />
 
-        <Button
-            android:id="@+id/save_button"
-            android:layout_width="90dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center|end"
-            android:layout_marginRight="10dp"
-            android:text="Save" />
     </LinearLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/email_layout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -42,8 +37,41 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
             android:layout_marginVertical="10dp"
-            android:hint="@string/enter_your_email"
+            android:hint="Enter New Email Address"
             android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <TextView
+        android:id="@+id/textView24"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:text="Password"
+        android:textSize="24sp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/password_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/password_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="10dp"
+            android:hint="Enter Password"
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|right"
+            android:layout_marginEnd="10dp"
+            android:backgroundTint="#000000"
+            android:text="Change Email Address" />
+    </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>

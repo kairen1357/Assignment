@@ -7,10 +7,20 @@
     android:padding="10dp"
     tools:context=".LoginActivity">
 
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/baseline_arrow_back_ios_24" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/Login_email_input_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:hint="Email Address"
         app:counterEnabled="false"
         app:helperTextEnabled="false"
@@ -58,26 +68,25 @@
     <TextView
         android:id="@+id/app_Title"
         style="@style/title_style"
-        android:layout_marginTop="16dp"
         android:text="@string/appTitle"
-        android:textColor="#9C27B0"
+        android:textColor="#673AB7"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.469"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.046" />
+        app:layout_constraintTop_toBottomOf="@+id/backButton"
+        app:layout_constraintVertical_bias="0.093" />
 
     <TextView
         android:id="@+id/textView36"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="4dp"
         android:gravity="center"
-        android:text="Log in"
+        android:text="Log In "
         android:textColor="#000000"
         android:textSize="34sp"
         app:layout_constraintEnd_toEndOf="@+id/app_Title"
-        app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="@+id/app_Title"
         app:layout_constraintTop_toBottomOf="@+id/app_Title" />
 

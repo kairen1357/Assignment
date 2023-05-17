@@ -3,10 +3,12 @@ package com.example.assignment_test
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.annotation.RequiresApi
 import com.example.assignment_test.databinding.FragmentYearlyDurationChartBinding
 import com.github.mikephil.charting.charts.LineChart
@@ -15,15 +17,26 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Arrays
 
 
 class FragmentSubFragmentYearlyDuration : Fragment() {
+    data class WorkoutRecord(val caloriesBurnt: Long, val date: String, val duration: Long)
 
     private lateinit var binding : FragmentYearlyDurationChartBinding
     private lateinit var line_chart: LineChart
-
+    interface DataRetrievalCallback {
+        fun onDataRetrieved(workoutRecords: List<FragmentSubFragmentMonthlyDuration.WorkoutRecord>)
+    }
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,25 +86,61 @@ class FragmentSubFragmentYearlyDuration : Fragment() {
         binding.yearTextview.text = date.format(formatter)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onResume() {
         super.onResume()
         // assuming you have a LineChart object named "chart" in your layout
         setUpLineChart()
     }
 
-    private fun setUpLineChart(){
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setUpLineChart() {
+        retrieveData(object : FragmentSubFragmentMonthlyDuration.DataRetrievalCallback {
+            override fun onDataRetrieved(workoutRecords: List<FragmentSubFragmentMonthlyDuration.WorkoutRecord>) {
+                // Call the function to set up the line chart using the retrieved data
+                updateLineChart(workoutRecords)
+            }
+        })
+
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun updateLineChart(workoutRecords: List<FragmentSubFragmentMonthlyDuration.WorkoutRecord>){
         val chart = binding.linechart
 
         // create a list of days to use as x-axis labels
-        val hours = listOf("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
+        val totalDuration = workoutRecords.sumBy { it.duration!!.toInt() }.toFloat()
+        val hoursDuration=(totalDuration/3600)
 
-        // create a list of durations for each day of the week (you'll need to replace this with your actual data)
-        val durations = listOf(2f, 4.3f, 6.9f,10.5f,9f,103.3f,21.3f,2f, 4.3f,14.2f,9f,103.3f)
+        if(hoursDuration >= 1){
+            val minutes = ((hoursDuration - hoursDuration.toInt())*60).toInt()
+            view?.findViewById<TextView>(R.id.total_duration)!!.text= hoursDuration.toInt().toString() + " Hours and  " + minutes.toString() + " minutes"
+        }
+        else if(hoursDuration < 1){
+            val minutes = (totalDuration/60).toInt()
+            view?.findViewById<TextView>(R.id.total_duration)!!.text= minutes.toString() + " minutes"
+        }
+
+        val months = listOf("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
+
+
+        val duration = arrayOfNulls<Int>(12)
+
+        Arrays.fill(duration, 0)
+
+        for (rec in workoutRecords) {
+            for(i in 0..11){
+                if(rec.date.substring(5,7).toInt()==i)
+                {
+                    duration[i] = duration[i]!! + rec.duration.toInt()
+                }
+
+            }
+        }
 
         // create an ArrayList of Entry objects to represent the data points on the chart
         val entries = ArrayList<Entry>()
-        for (i in 0 until hours.size) {
-            entries.add(Entry(i.toFloat(), durations[i]))
+        for (i in 0 until duration.size) {
+            entries.add(Entry(i.toFloat(), duration[i]?.toFloat() ?: 0f))
         }
 
         // create a LineDataSet object to hold the data and customize the appearance of the line
@@ -109,10 +158,10 @@ class FragmentSubFragmentYearlyDuration : Fragment() {
         val xAxis = chart.xAxis
         xAxis.position = XAxis.XAxisPosition.BOTTOM
         xAxis.setDrawGridLines(false)
-        xAxis.labelCount = hours.size
-        xAxis.valueFormatter = IndexAxisValueFormatter(hours)
+        xAxis.labelCount = months.size
+        xAxis.valueFormatter = IndexAxisValueFormatter(months)
         xAxis.setAxisMinimum(0f)
-        xAxis.setAxisMaximum(hours.size.toFloat() - 1)
+        xAxis.setAxisMaximum(months.size.toFloat() - 1)
         xAxis.granularity = 1f
 
         // customize the appearance of the chart's y-axis
@@ -133,6 +182,83 @@ class FragmentSubFragmentYearlyDuration : Fragment() {
         chart.legend.isEnabled = false
         chart.animateY(500)
         chart.invalidate()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun retrieveData(callback: FragmentSubFragmentMonthlyDuration.DataRetrievalCallback) {
+        val database: FirebaseDatabase = FirebaseDatabase.getInstance()
+        val ref: DatabaseReference = database.reference
+        val workoutRecords = mutableListOf<FragmentSubFragmentMonthlyDuration.WorkoutRecord>()
+        val currentDate = LocalDate.now()
+        val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val date = currentDate.format(dateFormat)
+
+        val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
+        val query: Query = ref.child("User_Workout")
+            .orderByChild("uid")
+            .equalTo(uid)
+        // Execute the query and retrieve the data
+        query.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+                val matchingRecords = mutableListOf<DataSnapshot>()
+
+                for (recordSnapshot in dataSnapshot.children) {
+                    val recordDate: String? = recordSnapshot.child("date").getValue(String::class.java)
+
+                    // Filter the records based on the Date condition locally
+                    if (recordDate!!.substring(0, 4) == date.substring(0, 4)) {
+                        matchingRecords.add(recordSnapshot)
+                    }
+                }
+
+                // Iterate over the matching records
+                for (recordSnapshot in matchingRecords) {
+                    val workoutId: String? = recordSnapshot.child("workout_ID").getValue(String::class.java)
+
+                    // Get the corresponding Workout data based on WorkoutID
+                    val workoutQuery: Query = ref.child("Workout")
+                        .orderByKey()
+                        .equalTo(workoutId)
+
+                    workoutQuery.addValueEventListener(object : ValueEventListener {
+                        override fun onDataChange(workoutSnapshot: DataSnapshot) {
+
+                            for (workoutDataSnapshot in workoutSnapshot.children) {
+                                val duration: Long? = workoutDataSnapshot.child("duration").getValue(Long::class.java)
+                                val caloriesBurnt: Long? = workoutDataSnapshot.child("calories_burned").getValue(Long::class.java)
+                                val recordDate: String? = recordSnapshot.child("date").getValue(String::class.java)
+
+
+                                val record = FragmentSubFragmentMonthlyDuration.WorkoutRecord(
+                                    caloriesBurnt!!,
+                                    recordDate.toString(),
+                                    duration!!
+                                )
+                                workoutRecords.add(record)
+                                Log.e("DEBUG",recordDate.toString())
+                            }
+                            callback.onDataRetrieved(workoutRecords)
+
+                        }
+
+                        override fun onCancelled(databaseError: DatabaseError) {
+                            // Handle any errors that occur
+                        }
+                    })
+                }
+
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle any errors that occur
+                println("Query cancelled or failed: ${databaseError.message}")
+            }
+
+
+        })
+
     }
 }
 

@@ -33,7 +33,6 @@ class MainActivity : AppCompatActivity(){
         }
 
         val sharedPreferences=getSharedPreferences("Mode", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
         val nightMode = sharedPreferences.getBoolean("night",false)
 
         if(nightMode)

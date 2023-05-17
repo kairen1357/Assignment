@@ -14,9 +14,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.auth.AuthCredential
+import com.google.firebase.auth.EmailAuthCredential
+import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.ktx.Firebase
 
 class ActivityChangePassword : AppCompatActivity() {
 
+    private lateinit var auth:FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_change_password)
@@ -31,7 +38,7 @@ class ActivityChangePassword : AppCompatActivity() {
         val newPasswordEditText = findViewById<TextInputEditText>(R.id.new_password_editText)
         val confirmPasswordEditText = findViewById<TextInputEditText>(R.id.con_new_password_editText)
 
-        val passwordRegex = "(?=.*[A-Z])(?=.*\\d).{8,}".toRegex()
+        val passwordRegex = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[@_])(?=\\S+\$).{6,}\$".toRegex()
 
         newPasswordEditText.addTextChangedListener(object : TextWatcher {
 
@@ -43,13 +50,13 @@ class ActivityChangePassword : AppCompatActivity() {
                 if (s.isNullOrEmpty()) {
                     newPasswordInputLayout.isErrorEnabled = true
                     newPasswordInputLayout.error = "Please enter a password."
-                } else if (s.length < 8) {
+                } else if (s.length < 6) {
                     newPasswordInputLayout.isErrorEnabled = true
-                    newPasswordInputLayout.error = "Password must be at least 8 characters."
+                    newPasswordInputLayout.error = "Password must be at least 6 characters."
                 } else if (!s.matches(passwordRegex)) {
                     newPasswordInputLayout.isErrorEnabled = true
                     newPasswordInputLayout.error =
-                        "Password must contain at least 1 uppercase and 1 number."
+                        "Password must contain at least 1 uppercase letter, 1 number, 1 '@' or '_', and must be at least 6 characters long."
                 } else {
                     newPasswordInputLayout.isErrorEnabled = false
                     newPasswordInputLayout.error = null
@@ -140,7 +147,8 @@ class ActivityChangePassword : AppCompatActivity() {
                 }
 
             // check if current password is valid (dummy condition)
-            val currentPasswordIsValid = true
+
+
 
             // check if new password and confirm password match
             if (newPasswordInput != confirmPasswordInput) {
@@ -159,23 +167,40 @@ class ActivityChangePassword : AppCompatActivity() {
                 // show error message for invalid password
                 Toast.makeText(
                     this,
-                    "New password must be at least 8 characters, with 1 uppercase and 1 number.",
+                    "New password must be at least 6 characters, with 1 uppercase and 1 number.",
                     Toast.LENGTH_SHORT
                 ).show()
                 return@setOnClickListener
             }
-
+            var currentPasswordIsValid = false
+            val auth=FirebaseAuth.getInstance()
+            val user=auth.currentUser
+            val credential=EmailAuthProvider.getCredential(user?.email.toString(),currentPasswordInput)
+            user?.reauthenticate(credential)?.addOnCompleteListener{
+                if(it.isSuccessful){
+                    user?.updatePassword(newPasswordInput)?.addOnCompleteListener{
+                            task-> if(task.isSuccessful){
+                        currentPasswordIsValid = true
+                        Toast.makeText(this,"Password Changed Successful",Toast.LENGTH_SHORT).show()
+                        onBackPressed()
+                    }
+                    }
+                }
+                else{
+                    val dialogBuilder = AlertDialog.Builder(this)
+                    dialogBuilder.setMessage("Incorrect current password input.")
+                        .setCancelable(false)
+                        .setPositiveButton("OK") { dialog, _ ->
+                            dialog.dismiss()
+                        }
+                    val dialog = dialogBuilder.create()
+                    dialog.show()
+                    currentPasswordIsValid = false
+                }
+            }
             // check if current password is correct
             if (!currentPasswordIsValid) {
-                // show dialog for incorrect current password
-                val dialogBuilder = AlertDialog.Builder(this)
-                dialogBuilder.setMessage("Incorrect current password input.")
-                    .setCancelable(false)
-                    .setPositiveButton("OK") { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                val dialog = dialogBuilder.create()
-                dialog.show()
+
                 return@setOnClickListener
             }
             Toast.makeText(this, "Password change successful.", Toast.LENGTH_SHORT).show()

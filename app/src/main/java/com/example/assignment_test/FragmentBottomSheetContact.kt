@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import com.example.assignment_test.databinding.FragmentBottomSheetContactBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class Fragment_bottom_sheet_contact: BottomSheetDialogFragment() {
+class FragmentBottomSheetContact: BottomSheetDialogFragment() {
 
     private lateinit var binding: FragmentBottomSheetContactBinding
 

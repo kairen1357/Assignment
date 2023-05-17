@@ -42,8 +42,11 @@ class FragmentHomePage : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
         databaseRef = FirebaseDatabase.getInstance().reference.child("SignupUsers").child(uid)
+
         databaseRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val userData = dataSnapshot.value as? HashMap<String, Any>
