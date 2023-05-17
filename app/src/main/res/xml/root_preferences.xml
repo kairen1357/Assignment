@@ -8,7 +8,7 @@
         <SwitchPreferenceCompat
             app:iconSpaceReserved="false"
             app:key="theme"
-            app:title="DarkTheme" />
+            app:title="Dark Mode" />
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -35,7 +35,7 @@
             app:title="About Us">
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="https://www.youtube.com" />
+                android:data="https://www.Apple.com" />
         </Preference>
     </PreferenceCategory>
 

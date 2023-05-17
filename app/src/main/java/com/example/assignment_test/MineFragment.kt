@@ -12,9 +12,8 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.assignment_test.ActivityChangePassword
-import com.example.assignment_test.Fragment_bottom_sheet_email
-import com.example.assignment_test.Fragment_bottom_sheet_username
-import com.example.assignment_test.R
+import com.example.assignment_test.FragmentBottomSheetEmail
+import com.example.assignment_test.FragmentBottomSheetUsername
 import com.example.assignment_test.SettingsActivity
 import com.example.assignment_test.SignUpActivity
 import com.example.assignment_test.databinding.FragmentMineBinding
@@ -23,20 +22,16 @@ import java.util.Locale
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.UploadTask.TaskSnapshot
-import java.util.UUID
 
 
-class MineFragment : Fragment(), Fragment_bottom_sheet_username.OnUserIdEnteredListener,
-    Fragment_bottom_sheet_email.OnNameEnteredListener,Dialog_weight_picker.OnWeightSelectedListener,
-    Dialog_height_picker.OnHeightSelectedListener{
+class MineFragment : Fragment(), FragmentBottomSheetUsername.OnUsernameEnteredListener,
+    FragmentBottomSheetEmail.OnEmailEnteredListener,DialogWeightPicker.OnWeightSelectedListener,
+    DialogHeightPicker.OnHeightSelectedListener,DialogAgePicker.OnAgeSelectedListener{
 
     private lateinit var databaseRef: DatabaseReference
     private val PICK_IMAGE_REQUEST = 1
     private var imageUri: Uri? = null
     private lateinit var binding: FragmentMineBinding
-    var formatDate=SimpleDateFormat("dd MMMM YYYY", Locale.US)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,23 +39,25 @@ class MineFragment : Fragment(), Fragment_bottom_sheet_username.OnUserIdEnteredL
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMineBinding.inflate(inflater, container, false)
+
         val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
         databaseRef = FirebaseDatabase.getInstance().reference.child("SignupUsers").child(uid)
         readData()
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val buttonSettings = binding.buttonSettings
-        val profilePicture = binding.profileImage
         val usernameLayout=binding.usernameLayout
+        val emailLayout=binding.emailLayout
 
         buttonSettings.setOnClickListener {
             buttonClicked()
         }
 
-        val fragmentBottomSheetUsername=Fragment_bottom_sheet_username()
+        val fragmentBottomSheetUsername=FragmentBottomSheetUsername()
         usernameLayout.setOnClickListener{
             fragmentBottomSheetUsername.show(childFragmentManager,"BottomSheetUsername")
         }
@@ -70,25 +67,30 @@ class MineFragment : Fragment(), Fragment_bottom_sheet_username.OnUserIdEnteredL
 
         }
 
-        val fragmentBottomSheetEmail= Fragment_bottom_sheet_email()
-        binding.emailLayout.setOnClickListener{
+        val fragmentBottomSheetEmail = FragmentBottomSheetEmail()
+        emailLayout.setOnClickListener{
             fragmentBottomSheetEmail.show(childFragmentManager,"BottomSheetEmail")
         }
 
 
         //weight onclick
         binding.weightLayout.setOnClickListener {
-            val dialog = Dialog_weight_picker(requireContext())
+            val dialog = DialogWeightPicker(requireContext())
             dialog.setOnWeightSelectedListener(this)
             dialog.show(childFragmentManager, "weight_picker_dialog")
         }
 
         binding.heightLayout.setOnClickListener {
-            val dialog = Dialog_height_picker(requireContext())
+            val dialog = DialogHeightPicker(requireContext())
             dialog.setOnHeightSelectedListener(this)
             dialog.show(childFragmentManager, "height_picker_dialog")
         }
 
+        binding.ageLayout.setOnClickListener {
+            val dialog = DialogAgePicker(requireContext())
+            dialog.setOnAgeSelectedListener(this)
+            dialog.show(childFragmentManager, "age_picker_dialog")
+        }
         //gender onclick
         binding.genderLayout.setOnClickListener {
             val listGender = arrayOf("Male","Female")
@@ -123,11 +125,23 @@ class MineFragment : Fragment(), Fragment_bottom_sheet_username.OnUserIdEnteredL
         }
 
         binding.logoutButton.setOnClickListener{
-            FirebaseAuth.getInstance().signOut()
-            val intent = Intent(requireContext(), SignUpActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-            requireActivity().finish()
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setTitle("Logout")
+            builder.setMessage("Are you sure you want to logout?")
+            builder.setPositiveButton("Yes") { _: DialogInterface, _: Int ->
+                // Perform logout action here
+                FirebaseAuth.getInstance().signOut()
+                val intent = Intent(requireContext(), SignUpActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                requireActivity().finish()
+            }
+            builder.setNegativeButton("No") { dialog: DialogInterface, _: Int ->
+                dialog.dismiss()
+            }
+            val dialog = builder.create()
+            dialog.show()
+
         }
 
 
@@ -138,12 +152,13 @@ class MineFragment : Fragment(), Fragment_bottom_sheet_username.OnUserIdEnteredL
         databaseRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val userData = dataSnapshot.value as? HashMap<String, Any>
+                FirebaseAuth.getInstance().currentUser?.email.toString()
                 if (userData != null) {
                     val username = userData["username"].toString()
                     val gender = userData["gender"].toString()
                     val height = userData["height"].toString()
                     val weight = userData["weight"].toString()
-                    val email = userData["email"].toString()
+                    val email = FirebaseAuth.getInstance().currentUser?.email.toString()
                     val age = userData["age"].toString()
                     val storageRef = FirebaseStorage.getInstance().reference
                     val userId = FirebaseAuth.getInstance().currentUser?.uid
@@ -228,6 +243,10 @@ class MineFragment : Fragment(), Fragment_bottom_sheet_username.OnUserIdEnteredL
 
     override fun onEmailEntered(email: String) {
         binding.emailValue.text = email
+    }
+
+    override fun onAgeSelected(age: Int) {
+        binding.ageValue.text=age.toString()
     }
 
 

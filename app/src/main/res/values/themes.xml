@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Assignment_test" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="colorSecondary">@color/purple_500</item>
         <item name="android:textColorPrimary">@color/textColorPrimary</item>
         <item name="android:textColorSecondary">@color/textColorSecondary</item>
     </style>

@@ -1,5 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/layout_style"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -16,7 +18,9 @@
             android:layout_height="40dp"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:src="@drawable/baseline_arrow_back_ios_24" />
+            android:contentDescription="@string/nothing"
+            android:src="@drawable/baseline_arrow_back_ios_24"
+            tools:ignore="TouchTargetSizeCheck" />
 
         <TextView
             android:layout_width="0dp"
@@ -29,6 +33,26 @@
 
     <FrameLayout
         android:id="@+id/settings"
+        style="@style/sublayout_style"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></FrameLayout>
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="20dp">
+
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/delete_acc_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:backgroundTint="#E1001A"
+        android:text="Delete Account"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:ignore="VisualLintButtonSize" />
 </LinearLayout>

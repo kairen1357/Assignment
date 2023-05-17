@@ -10,52 +10,52 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
-class Dialog_height_picker(private val context: Context) : DialogFragment() {
+class DialogAgePicker(private val context: Context) : DialogFragment() {
 
-    private var listener: OnHeightSelectedListener? = null
+    private var listener: OnAgeSelectedListener? = null
     private lateinit var databaseRef: DatabaseReference
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = requireActivity().layoutInflater
-        val view = inflater.inflate(R.layout.dialog_height_picker, null)
-        val heightPicker = view.findViewById<NumberPicker>(R.id.height_picker)
+        val view = inflater.inflate(R.layout.dialog_age_picker, null)
+        val agePicker = view.findViewById<NumberPicker>(R.id.age_picker)
 
         val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
         databaseRef = FirebaseDatabase.getInstance().reference.child("SignupUsers").child(uid)
 
-        heightPicker.minValue = 100
-        heightPicker.maxValue = 300
-        heightPicker.value = 160
-        heightPicker.wrapSelectorWheel = false
+        agePicker.minValue = 0
+        agePicker.maxValue = 120
+        agePicker.value = 10
+        agePicker.wrapSelectorWheel = false
 
         val builder = AlertDialog.Builder(context)
         builder.setView(view)
-        builder.setTitle("Select Height in cm")
+        builder.setTitle("Select Your Age")
         builder.setPositiveButton("OK") { dialog, which ->
-            val height = heightPicker.value.toLong()
-            listener?.onHeightSelected(height.toDouble())
-            updateDataInDatabase(height)
+            val age = agePicker.value.toLong()
+            listener?.onAgeSelected(age.toInt())
+            updateDataInDatabase(age)
         }
         builder.setNegativeButton("Cancel", null)
 
         return builder.create()
     }
 
-    private fun updateDataInDatabase(height: Long) {
-        databaseRef.child("height").setValue(height)
+    private fun updateDataInDatabase(age: Long) {
+        databaseRef.child("age").setValue(age)
             .addOnSuccessListener {
-                Toast.makeText(context, "Change Height Successful", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Change Age Successful", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener { e ->
                 // Error occurred while updating data
             }
     }
 
-    interface OnHeightSelectedListener {
-        fun onHeightSelected(height: Double)
+    interface OnAgeSelectedListener {
+        fun onAgeSelected(age: Int)
     }
 
-    fun setOnHeightSelectedListener(listener: OnHeightSelectedListener) {
+    fun setOnAgeSelectedListener(listener: OnAgeSelectedListener) {
         this.listener = listener
     }
 }

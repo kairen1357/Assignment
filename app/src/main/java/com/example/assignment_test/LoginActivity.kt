@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
@@ -40,6 +41,10 @@ class LoginActivity : AppCompatActivity() {
 
         passwordEditText.addTextChangedListener {
             passwordInputLayout.error = null
+        }
+
+        findViewById<ImageButton>(R.id.backButton).setOnClickListener{
+            onBackPressed()
         }
 
 

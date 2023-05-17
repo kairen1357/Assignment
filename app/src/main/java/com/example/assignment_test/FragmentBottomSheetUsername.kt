@@ -7,17 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
 import com.example.assignment_test.R.*
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
-class Fragment_bottom_sheet_username : BottomSheetDialogFragment() {
+class FragmentBottomSheetUsername : BottomSheetDialogFragment() {
 
     // Declare the listener variable
-    private var listener: OnUserIdEnteredListener? = null
+    private var listener: OnUsernameEnteredListener? = null
     private lateinit var databaseRef: DatabaseReference
 
     // Declare the view variables
@@ -25,7 +24,7 @@ class Fragment_bottom_sheet_username : BottomSheetDialogFragment() {
     private lateinit var buttonSave: Button
 
     // Define the listener interface
-    interface OnUserIdEnteredListener {
+    interface OnUsernameEnteredListener {
         fun onInputReceived(input: String)
     }
 
@@ -68,10 +67,10 @@ class Fragment_bottom_sheet_username : BottomSheetDialogFragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         // Verify that the parent fragment implements the listener interface
-        if (parentFragment is OnUserIdEnteredListener) {
-            listener = parentFragment as OnUserIdEnteredListener
+        if (parentFragment is OnUsernameEnteredListener) {
+            listener = parentFragment as OnUsernameEnteredListener
         } else {
-            throw RuntimeException("$context must implement OnUserIdEnteredListener")
+            throw RuntimeException("$context must implement OnUsernameEnteredListener")
         }
     }
 
