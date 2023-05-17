@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="20dp"
+    android:layout_marginBottom="100dp"
+    tools:layout_editor_absoluteX="1dp"
+    tools:layout_editor_absoluteY="41dp"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".indoorWorkout_fragment">
+
+        <!-- TODO: Update blank fragment layout -->
+        <TextView
+            android:id="@+id/outdoorWorkout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Outdoor Workout"
+            android:textColor="#7C5383"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <ImageButton
+            android:id="@+id/outdoor_lvl2"
+            android:layout_width="match_parent"
+            android:layout_height="260dp"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="45dp"
+            android:background="@color/white"
+            android:contentDescription="Difficulty 1"
+            android:scaleType="fitXY"
+            android:src="@drawable/outdoor_lvl2"
+            app:layout_constraintTop_toBottomOf="@+id/outdoorWorkout"
+            tools:layout_editor_absoluteX="10dp" />
+
+        <ImageView
+            android:id="@+id/imageView12"
+            android:layout_width="51dp"
+            android:layout_height="63dp"
+            app:layout_constraintBottom_toBottomOf="@+id/outdoor_lvl2"
+            app:layout_constraintStart_toStartOf="@+id/outdoor_lvl2"
+            app:srcCompat="@drawable/fire_lit" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="51dp"
+            android:layout_height="63dp"
+            app:layout_constraintBottom_toBottomOf="@+id/outdoor_lvl2"
+            app:layout_constraintStart_toEndOf="@+id/imageView12"
+            app:srcCompat="@drawable/fire_lit" />
+
+        <ImageView
+            android:id="@+id/imageView6"
+            android:layout_width="51dp"
+            android:layout_height="63dp"
+            app:layout_constraintBottom_toBottomOf="@+id/outdoor_lvl2"
+            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:srcCompat="@drawable/fire_unlit" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

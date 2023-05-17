@@ -1,0 +1,39 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Assignment_test" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <item name="android:textColorSecondary">@color/textColorSecondary</item>
+    </style>
+
+    <style name="Theme.Assignment_test" parent="Base.Theme.Assignment_test" />
+    <style name="TabIndicator_style">
+        <item name="android:background">@drawable/tab_background</item>
+        <item name="tabIndicator">@drawable/tab_indicator</item>
+        <item name="tabIndicatorColor">@color/purple_500</item>
+        <item name="tabSelectedTextColor">@color/textColorSecondary</item>
+        <item name="tabTextColor">@color/black</item>
+
+    </style>
+    <style name="top_bar">
+        <item name="android:background">@drawable/top_bar</item>
+        <item name="android:textColor">@color/textColorSecondary</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingStart">10dp</item>
+    </style>
+    <style name="layout_style">
+        <item name="android:background">#EFEFEF</item>
+    </style>
+
+    <style name="sublayout_style">
+        <item name="android:background">@drawable/report_background</item>
+    </style>
+
+
+
+</resources>

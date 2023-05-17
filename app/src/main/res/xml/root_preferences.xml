@@ -1,0 +1,42 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="General">
+
+        <SwitchPreferenceCompat
+            app:iconSpaceReserved="false"
+            app:key="theme"
+            app:title="DarkTheme" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="Notification">
+        <SwitchPreferenceCompat
+            app:iconSpaceReserved="false"
+            app:key="notification"
+            app:title="Receive notification" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="More information">
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="contactUs"
+            app:title="Contact Us" />
+
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="aboutUs"
+            app:title="About Us">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://www.youtube.com" />
+        </Preference>
+    </PreferenceCategory>
+
+</PreferenceScreen>

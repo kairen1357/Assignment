@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+
+    <item
+        android:id="@+id/home"
+        android:title="Home"
+        android:icon="@drawable/btmnav_home_icon"
+        />
+    <item
+        android:id="@+id/workout"
+        android:title="Workout"
+        android:icon="@drawable/btmnav_running_icon"
+        />
+    <item
+        android:id="@+id/report"
+        android:title="Report"
+        android:icon="@drawable/btmnav_monitor_icon"
+        />
+    <item
+        android:id="@+id/settings"
+        android:title="Settings"
+        android:icon="@drawable/btmnav_settings_icon"
+        />
+</menu>

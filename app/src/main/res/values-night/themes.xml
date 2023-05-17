@@ -1,0 +1,45 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Assignment_test" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimaryDark</item>
+        <item name="colorSecondary">@color/colorSecondaryDark</item>
+        <item name="android:textColorPrimary">@color/textColorPrimaryDark</item>
+        <item name="android:textColorSecondary">@color/textColorSecondaryDark</item>
+    </style>
+
+    <style name="Theme.Assignment_test" parent="Base.Theme.Assignment_test" />
+
+    <style name="TabIndicator_style">
+        <item name="android:background">@drawable/tab_background</item>
+        <item name="android:backgroundTint">#311157</item>
+        <item name="tabIndicator">@drawable/tab_indicator</item>
+        <item name="tabIndicatorColor">@color/colorPrimaryDark</item>
+        <item name="tabTextColor">@color/textColorPrimaryDark</item>
+        <item name="tabSelectedTextColor">@color/textColorSecondaryDark</item>
+    </style>
+    <style name="top_bar">
+        <item name="android:background">@drawable/top_bar</item>
+        <item name="android:backgroundTint">@color/colorPrimaryDark</item>
+        <item name="android:textColor">@color/textColorSecondaryDark</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingStart">10dp</item>
+    </style>
+    <style name="layout_style">
+        <item name="android:background">#0B0B0B</item>
+    </style>
+
+    <style name="sublayout_style">
+        <item name="android:background">@drawable/report_background</item>
+        <item name="android:backgroundTint">#2C2C2C</item>
+    </style>
+
+    <style name="settings_style">
+        <item name="android:tint">@color/colorSecondaryDark</item>
+    </style>
+
+
+</resources>
