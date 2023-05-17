@@ -64,11 +64,11 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/total_duration"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
-            android:text="@string/_123"
             android:textColor="?android:attr/textColorPrimary" />
     </LinearLayout>
 
@@ -82,21 +82,11 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
 
         <TextView
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="5dp"
-            android:text="@string/average_duration"
-            android:textColor="#ED0000"
-            android:textStyle="bold" />
-
-        <TextView
+            android:id="@+id/average_duration"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
-            android:text="@string/_123"
             android:textColor="?android:attr/textColorPrimary" />
     </LinearLayout>
 

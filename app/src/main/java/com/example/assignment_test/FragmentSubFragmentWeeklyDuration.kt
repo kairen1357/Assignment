@@ -3,10 +3,12 @@ package com.example.assignment_test
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.example.assignment_test.databinding.FragmentWeeklyDurationChartBinding
@@ -16,15 +18,29 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAdjusters
+import java.util.Arrays
 
 class FragmentSubFragmentWeeklyDuration : Fragment() {
+    data class WorkoutRecord(val caloriesBurnt: Long, val date: String, val duration: Long)
 
     private lateinit var binding : FragmentWeeklyDurationChartBinding
     private lateinit var line_chart: LineChart
+
+
+    interface DataRetrievalCallback {
+        fun onDataRetrieved(workoutRecords: List<WorkoutRecord>)
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -85,25 +101,63 @@ class FragmentSubFragmentWeeklyDuration : Fragment() {
         binding.yearTextview.text = "$year"
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onResume() {
         super.onResume()
         setUpLineChart()
     }
 
-    private fun setUpLineChart(){
-        val chart = binding.lineChart
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setUpLineChart() {
+        retrieveData(object : DataRetrievalCallback {
+            override fun onDataRetrieved(workoutRecords: List<WorkoutRecord>) {
+                // Call the function to set up the line chart using the retrieved data
+                updateLineChart(workoutRecords)
+            }
+        })
 
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun updateLineChart(workoutRecords: List<WorkoutRecord>){
+        val chart = binding.lineChart
+        val entries = ArrayList<Entry>()
         // create a list of days to use as x-axis labels
+        val totalDuration = workoutRecords.sumBy { it.duration!!.toInt() }.toFloat()
+        val hoursDuration=(totalDuration/3600)
+
+        if(hoursDuration >= 1){
+            val minutes = ((hoursDuration - hoursDuration.toInt())*60).toInt()
+            view?.findViewById<TextView>(R.id.total_duration)!!.text= hoursDuration.toInt().toString() + " Hours and  " + minutes.toString() + " minutes"
+        }
+        else if(hoursDuration < 1){
+            val minutes = (totalDuration/60).toInt()
+            view?.findViewById<TextView>(R.id.total_duration)!!.text= minutes.toString() + " minutes"
+        }
+        val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val daysOfWeek = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 
-        // create a list of durations for each day of the week (you'll need to replace this with your actual data)
-        val durations = listOf(2f, 4.3f, 6.9f,10.5f, 12f, 13.1f,21.3f)
+        val totalduration = arrayOfNulls<Int>(7)
 
-        // create an ArrayList of Entry objects to represent the data points on the chart
-        val entries = ArrayList<Entry>()
-        for (i in 0 until daysOfWeek.size) {
-            entries.add(Entry(i.toFloat(), durations[i]))
+
+        Arrays.fill(totalduration, 0)
+
+        for (rec in workoutRecords) {
+            for(i in 0..6){
+                if(LocalDate.parse(rec.date, dateFormat)== LocalDate.now().plusDays(i.toLong()))
+                {
+                    totalduration[i] = totalduration[i]!! + rec.duration.toInt()
+                }
+
+            }
         }
+
+        for (i in 0 until 7) {
+            if(totalduration[i]!=null){
+                entries.add(Entry(i.toFloat(), totalduration[i]!!.toFloat()))
+
+            }
+        }
+
 
         // create a LineDataSet object to hold the data and customize the appearance of the line
         val dataSet = LineDataSet(entries, "Weekly Report")
@@ -144,6 +198,84 @@ class FragmentSubFragmentWeeklyDuration : Fragment() {
         chart.legend.isEnabled = false
         chart.animateY(500)
         chart.invalidate()
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun retrieveData(callback: DataRetrievalCallback) {
+        val database: FirebaseDatabase = FirebaseDatabase.getInstance()
+        val ref: DatabaseReference = database.reference
+        val workoutRecords = mutableListOf<WorkoutRecord>()
+
+        val currentDate = LocalDate.now()
+        val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+        val dates = (0..6).map { currentDate.plusDays(it.toLong()).format(dateFormat) }
+        val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+        val query: Query = ref.child("User_Workout")
+            .orderByChild("uid")
+            .equalTo(uid)
+        // Execute the query and retrieve the data
+        query.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+                val matchingRecords = mutableListOf<DataSnapshot>()
+
+                for (recordSnapshot in dataSnapshot.children) {
+                    val recordDate: String? = recordSnapshot.child("date").getValue(String::class.java)
+
+                    // Filter the records based on the Date condition locally
+                    if (dates.contains(recordDate)) {
+                        matchingRecords.add(recordSnapshot)
+                    }
+                }
+
+                // Iterate over the matching records
+                for (recordSnapshot in matchingRecords) {
+                    val workoutId: String? = recordSnapshot.child("workout_ID").getValue(String::class.java)
+
+                    // Get the corresponding Workout data based on WorkoutID
+                    val workoutQuery: Query = ref.child("Workout")
+                        .orderByKey()
+                        .equalTo(workoutId)
+
+                    workoutQuery.addValueEventListener(object : ValueEventListener {
+                        override fun onDataChange(workoutSnapshot: DataSnapshot) {
+
+                            for (workoutDataSnapshot in workoutSnapshot.children) {
+                                val duration: Long? = workoutDataSnapshot.child("duration").getValue(Long::class.java)
+                                val caloriesBurnt: Long? = workoutDataSnapshot.child("calories_burned").getValue(Long::class.java)
+                                val recordDate: String? = recordSnapshot.child("date").getValue(String::class.java)
+
+                                val record = WorkoutRecord(
+                                    caloriesBurnt!!,
+                                    recordDate.toString(),
+                                    duration!!,
+
+                                )
+                                workoutRecords.add(record)
+
+                            }
+                            callback.onDataRetrieved(workoutRecords)
+
+                        }
+
+                        override fun onCancelled(databaseError: DatabaseError) {
+                            // Handle any errors that occur
+                        }
+                    })
+                }
+
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle any errors that occur
+                println("Query cancelled or failed: ${databaseError.message}")
+            }
+
+
+        })
+
     }
 
 }
