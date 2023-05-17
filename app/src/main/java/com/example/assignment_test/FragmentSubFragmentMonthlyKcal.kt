@@ -110,7 +110,7 @@ class FragmentSubFragmentMonthlyKcal : Fragment() {
         // create a list of days to use as x-axis labels
         val totalKcal = workoutRecords.sumBy { it.caloriesBurnt!!.toInt() }.toFloat()
 
-        view?.findViewById<TextView>(R.id.total_kcal)!!.text= totalKcal.toString() + " Kcal"
+        binding.totalKcal.text= totalKcal.toString() + " Kcal"
         val kcal = arrayOfNulls<Int>(30)
 
         Arrays.fill(kcal, 0)

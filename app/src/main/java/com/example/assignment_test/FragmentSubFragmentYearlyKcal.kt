@@ -111,7 +111,7 @@ class FragmentSubFragmentYearlyKcal : Fragment() {
         val totalKcal = workoutRecords.sumBy { it.caloriesBurnt!!.toInt() }.toFloat()
 
 
-        view?.findViewById<TextView>(R.id.total_kcal)!!.text= totalKcal.toString() + " Kcal"
+        binding.totalKcal.text= totalKcal.toString() + " Kcal"
 
 
 

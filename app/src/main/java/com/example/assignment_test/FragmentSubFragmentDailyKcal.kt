@@ -114,7 +114,7 @@ class FragmentSubFragmentDailyKcal : Fragment() {
         val hoursKcal=(totalKcal/3600)
 
 
-            view?.findViewById<TextView>(R.id.total_kcal)!!.text= totalKcal.toString() + " Kcal"
+            binding.totalKcal.text= totalKcal.toString() + " Kcal"
 
 
         for (rec in workoutRecords) {

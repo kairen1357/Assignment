@@ -113,11 +113,11 @@ class FragmentSubFragmentMonthlyDuration : Fragment() {
 
         if(hoursDuration >= 1){
             val minutes = ((hoursDuration - hoursDuration.toInt())*60).toInt()
-            view?.findViewById<TextView>(R.id.total_duration)!!.text= hoursDuration.toInt().toString() + " Hours and  " + minutes.toString() + " minutes"
+            binding.totalDuration.text= hoursDuration.toInt().toString() + " Hours and  " + minutes.toString() + " minutes"
         }
         else if(hoursDuration < 1){
             val minutes = (totalDuration/60).toInt()
-            view?.findViewById<TextView>(R.id.total_duration)!!.text= minutes.toString() + " minutes"
+            binding.totalDuration.text= minutes.toString() + " minutes"
         }
         val duration = arrayOfNulls<Int>(30)
 
