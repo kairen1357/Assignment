@@ -34,7 +34,7 @@ class FragmentSubFragmentMonthlyKcal : Fragment() {
 
     private lateinit var binding : FragmentMonthlyKcalChartBinding
     private lateinit var line_chart: LineChart
-
+    private lateinit var date_:LocalDate
     interface DataRetrievalCallback {
         fun onDataRetrieved(workoutRecords: List<WorkoutRecord>)
     }
@@ -63,6 +63,8 @@ class FragmentSubFragmentMonthlyKcal : Fragment() {
             val nextDate = textViewDate.plusMonths(1)
             if(nextDate <= currentDate){
                 updateDate(nextDate)
+                binding.linechart.clear()
+                setUpLineChart()
                 val changedTextView=binding.monthTextview.text.toString()
                 if(currentTextView == changedTextView)
                 {
@@ -76,6 +78,8 @@ class FragmentSubFragmentMonthlyKcal : Fragment() {
             val prevDate= textViewDate.minusMonths(1)
             binding.rightButton.clearColorFilter()
             updateDate(prevDate)
+            binding.linechart.clear()
+            setUpLineChart()
         }
 
 
@@ -83,6 +87,7 @@ class FragmentSubFragmentMonthlyKcal : Fragment() {
     }
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updateDate(date: LocalDate) {
+        date_=date
         val formatter = DateTimeFormatter.ofPattern("MMM yyyy")
         binding.monthTextview.text = date.format(formatter)
     }

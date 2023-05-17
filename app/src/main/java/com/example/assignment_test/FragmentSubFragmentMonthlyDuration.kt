@@ -34,7 +34,7 @@ class FragmentSubFragmentMonthlyDuration : Fragment() {
 
     private lateinit var binding : FragmentMonthlyDurationChartBinding
     private lateinit var line_chart: LineChart
-
+    private lateinit var date_:LocalDate
     interface DataRetrievalCallback {
         fun onDataRetrieved(workoutRecords: List<WorkoutRecord>)
     }
@@ -63,10 +63,14 @@ class FragmentSubFragmentMonthlyDuration : Fragment() {
             val nextDate = textViewDate.plusMonths(1)
             if(nextDate <= currentDate){
                 updateDate(nextDate)
+
                 val changedTextView=binding.monthTextview.text.toString()
                 if(currentTextView == changedTextView)
                 {
                     binding.rightButton.setColorFilter(Color.parseColor("#808080"))
+                }else{
+                    binding.linechart.clear()
+                    setUpLineChart()
                 }
             }
         }
@@ -76,6 +80,8 @@ class FragmentSubFragmentMonthlyDuration : Fragment() {
             val prevDate= textViewDate.minusMonths(1)
             binding.rightButton.clearColorFilter()
             updateDate(prevDate)
+            binding.linechart.clear()
+            setUpLineChart()
         }
 
 
@@ -83,6 +89,7 @@ class FragmentSubFragmentMonthlyDuration : Fragment() {
     }
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updateDate(date: LocalDate) {
+        date_=date
         val formatter = DateTimeFormatter.ofPattern("MMM yyyy")
         binding.monthTextview.text = date.format(formatter)
     }
@@ -184,9 +191,8 @@ class FragmentSubFragmentMonthlyDuration : Fragment() {
         val database: FirebaseDatabase = FirebaseDatabase.getInstance()
         val ref: DatabaseReference = database.reference
         val workoutRecords = mutableListOf<WorkoutRecord>()
-        val currentDate = LocalDate.now()
         val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val date = currentDate.format(dateFormat)
+        val date = date_.format(dateFormat)
 
         val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
 

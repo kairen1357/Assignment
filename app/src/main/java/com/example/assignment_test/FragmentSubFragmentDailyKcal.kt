@@ -3,6 +3,7 @@ package com.example.assignment_test
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -30,7 +31,7 @@ class FragmentSubFragmentDailyKcal : Fragment() {
 
     private lateinit var binding : FragmentDailyKcalChartBinding
     private lateinit var line_chart: LineChart
-
+    private lateinit var date_:LocalDate
     interface DataRetrievalCallback {
         fun onDataRetrieved(workoutRecords: List<WorkoutRecord>)
     }
@@ -60,9 +61,10 @@ class FragmentSubFragmentDailyKcal : Fragment() {
             val textViewDate = LocalDate.parse(dateTextView.text, DateTimeFormatter.ofPattern("d MMMM yyyy"))
             val nextDate = textViewDate.plusDays(1)
 
-            setUpLineChart()
             if(nextDate <= currentDate){
                 updateDate(nextDate)
+                binding.lineChart.clear()
+                setUpLineChart()
                 if(nextDate == currentDate)
                 {
                     binding.rightButton.setColorFilter(Color.parseColor("#808080"))
@@ -75,6 +77,7 @@ class FragmentSubFragmentDailyKcal : Fragment() {
             val textViewDate = LocalDate.parse(dateTextView.text, DateTimeFormatter.ofPattern("d MMMM yyyy"))
             val prevDate= textViewDate.minusDays(1)
             binding.rightButton.clearColorFilter()
+            binding.lineChart.clear()
             updateDate(prevDate)
         }
 
@@ -83,6 +86,7 @@ class FragmentSubFragmentDailyKcal : Fragment() {
     }
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updateDate(date: LocalDate) {
+        date_=date
         val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
         binding.dateTextview.text = date.format(formatter)
     }
@@ -109,17 +113,26 @@ class FragmentSubFragmentDailyKcal : Fragment() {
     private fun updateLineChart(workoutRecords: List<WorkoutRecord>){
         val chart = binding.lineChart
         val entries = ArrayList<Entry>()
+        if(workoutRecords.isEmpty()){
+            for (rec in workoutRecords) {
+                Log.e("DEBUG","NOOOOOOOOOO${rec.caloriesBurnt}${rec.timeDecimal}")
+            }
+        }
+        else{
+            for (rec in workoutRecords) {
+                Log.e("DEBUG","YESSSSSSSSSS${rec.caloriesBurnt}${rec.timeDecimal}")
+            }
+        }
+
         // create a list of days to use as x-axis labels
         val totalKcal = workoutRecords.sumBy { it.caloriesBurnt.toInt() }.toFloat()
-        val hoursKcal=(totalKcal/3600)
 
 
-            binding.totalKcal.text= totalKcal.toString() + " Kcal"
+        binding.totalKcal.text= totalKcal.toString() + " Kcal"
 
 
         for (rec in workoutRecords) {
             entries.add(Entry(rec.timeDecimal.toFloat(), rec.caloriesBurnt.toFloat()))
-
         }
         // create a LineDataSet object to hold the data and customize the appearance of the line
         val dataSet = LineDataSet(entries, "Weekly Report")
@@ -169,10 +182,9 @@ class FragmentSubFragmentDailyKcal : Fragment() {
         val database: FirebaseDatabase = FirebaseDatabase.getInstance()
         val ref: DatabaseReference = database.reference
         val workoutRecords = mutableListOf<WorkoutRecord>()
-        val currentDate = LocalDate.now()
         val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val date = currentDate.format(dateFormat)
-
+        val date = date_.format(dateFormat)
+        Log.e("DEBUG","COMEHERE")
         val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
 
         val query: Query = ref.child("User_Workout")

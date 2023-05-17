@@ -69,10 +69,11 @@ class FragmentSubFragmentWeeklyKcal : Fragment() {
             val nextDate= textViewDate.plusWeeks(1)
             if(nextDate <= currentDate){
                 updateDate(nextDate)
+                binding.lineChart.clear()
+                setUpLineChart()
                 val changedTextView=binding.weekRangeTextview.text.toString()
                 if(currentTextView == changedTextView)
                 {
-                    Toast.makeText(requireContext(),"$currentTextView + $changedTextView",Toast.LENGTH_LONG).show()
                     binding.rightButton.setColorFilter(Color.parseColor("#808080"))
                 }
             }
@@ -84,6 +85,8 @@ class FragmentSubFragmentWeeklyKcal : Fragment() {
             val prevDate= currentDate.minusWeeks(1)
             binding.rightButton.clearColorFilter()
             updateDate(prevDate)
+            binding.lineChart.clear()
+            setUpLineChart()
         }
 
         return binding.root

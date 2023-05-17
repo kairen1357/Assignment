@@ -36,7 +36,7 @@ class FragmentSubFragmentWeeklyDuration : Fragment() {
 
     private lateinit var binding : FragmentWeeklyDurationChartBinding
     private lateinit var line_chart: LineChart
-
+    private lateinit var date_:LocalDate
 
     interface DataRetrievalCallback {
         fun onDataRetrieved(workoutRecords: List<WorkoutRecord>)
@@ -69,10 +69,11 @@ class FragmentSubFragmentWeeklyDuration : Fragment() {
             val nextDate= textViewDate.plusWeeks(1)
             if(nextDate <= currentDate){
                 updateDate(nextDate)
+                binding.lineChart.clear()
+                setUpLineChart()
                 val changedTextView=binding.weekRangeTextview.text.toString()
                 if(currentTextView == changedTextView)
                 {
-                    Toast.makeText(requireContext(),"$currentTextView + $changedTextView",Toast.LENGTH_LONG).show()
                     binding.rightButton.setColorFilter(Color.parseColor("#808080"))
                 }
             }
@@ -84,6 +85,8 @@ class FragmentSubFragmentWeeklyDuration : Fragment() {
             val prevDate= currentDate.minusWeeks(1)
             binding.rightButton.clearColorFilter()
             updateDate(prevDate)
+            binding.lineChart.clear()
+            setUpLineChart()
         }
 
         return binding.root
@@ -92,6 +95,7 @@ class FragmentSubFragmentWeeklyDuration : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updateDate(date:LocalDate) {
         val startOfWeek = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+        date_=startOfWeek
         val endOfWeek = startOfWeek.plusDays(6)
         val formatter = DateTimeFormatter.ofPattern("dd MMM")
         val startFormatted = startOfWeek.format(formatter)
@@ -209,8 +213,8 @@ class FragmentSubFragmentWeeklyDuration : Fragment() {
 
         val currentDate = LocalDate.now()
         val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-
-        val dates = (0..6).map { currentDate.plusDays(it.toLong()).format(dateFormat) }
+        val date=date_
+        val dates = (0..6).map { date.plusDays(it.toLong()).format(dateFormat) }
         val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
         val query: Query = ref.child("User_Workout")
             .orderByChild("uid")
@@ -261,7 +265,6 @@ class FragmentSubFragmentWeeklyDuration : Fragment() {
                         }
 
                         override fun onCancelled(databaseError: DatabaseError) {
-                            // Handle any errors that occur
                         }
                     })
                 }

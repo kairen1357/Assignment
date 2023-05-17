@@ -30,7 +30,7 @@ class FragmentSubFragmentDailyDuration : Fragment() {
 
     private lateinit var binding : FragmentDailyDurationChartBinding
     private lateinit var line_chart: LineChart
-
+    private lateinit var date_:LocalDate
     interface DataRetrievalCallback {
         fun onDataRetrieved(workoutRecords: List<WorkoutRecord>)
     }
@@ -60,13 +60,15 @@ class FragmentSubFragmentDailyDuration : Fragment() {
             val textViewDate = LocalDate.parse(dateTextView.text, DateTimeFormatter.ofPattern("d MMMM yyyy"))
             val nextDate = textViewDate.plusDays(1)
 
-            setUpLineChart()
             if(nextDate <= currentDate){
                 updateDate(nextDate)
+                binding.lineChart.clear()
+                setUpLineChart()
                 if(nextDate == currentDate)
                 {
                     binding.rightButton.setColorFilter(Color.parseColor("#808080"))
                 }
+
             }
 
         }
@@ -76,6 +78,8 @@ class FragmentSubFragmentDailyDuration : Fragment() {
             val prevDate= textViewDate.minusDays(1)
             binding.rightButton.clearColorFilter()
             updateDate(prevDate)
+            binding.lineChart.clear()
+            setUpLineChart()
         }
 
 
@@ -83,6 +87,7 @@ class FragmentSubFragmentDailyDuration : Fragment() {
     }
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updateDate(date: LocalDate) {
+        date_=date
         val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
         binding.dateTextview.text = date.format(formatter)
     }
@@ -174,9 +179,8 @@ class FragmentSubFragmentDailyDuration : Fragment() {
         val database: FirebaseDatabase = FirebaseDatabase.getInstance()
         val ref: DatabaseReference = database.reference
         val workoutRecords = mutableListOf<WorkoutRecord>()
-        val currentDate = LocalDate.now()
         val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val date = currentDate.format(dateFormat)
+        val date = date_.format(dateFormat)
 
         val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
 
