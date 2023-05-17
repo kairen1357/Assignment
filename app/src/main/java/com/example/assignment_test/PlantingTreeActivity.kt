@@ -23,7 +23,7 @@ import com.google.firebase.database.ValueEventListener
 class PlantingTreeActivity : AppCompatActivity(){
 
     lateinit var binding : PlantingTreeBinding
-    var username = FirebaseAuth.getInstance().currentUser?.uid.toString() // Replace with the actual username
+    var username = "hoeleong20" // Replace with the actual username FirebaseAuth.getInstance().currentUser?.uid.toString()
     var workOutPoint=0
     var powerPlantScore=0
     var powerPlantPointUsedPerClick=100
@@ -58,7 +58,7 @@ class PlantingTreeActivity : AppCompatActivity(){
             if (workOutPoint >= 100 ) {
 
                 if (!isAnimationPlaying) {
-                    triggerPlantingVideo(powerPlantScore)
+                    triggerPlantingVideo()
 
                     binding.workOutPointTextField.text="$workOutPoint / 100"
                     binding.currentUserTotalContributedText.text="Power Plant Score : $powerPlantScore"
@@ -139,7 +139,16 @@ class PlantingTreeActivity : AppCompatActivity(){
 
     }
 
-    private fun triggerPlantingVideo(changePowerPlantScore: Int) {
+    private fun triggerPlantingVideo() {
+
+        val plantingVideo: LottieAnimationView = binding.plantingVideo
+        when{
+            powerPlantScore<=100 -> plantingVideo.setAnimation(R.raw.planting_video1)
+            powerPlantScore<=300 -> plantingVideo.setAnimation(R.raw.planting_video2)
+            else -> plantingVideo.setAnimation(R.raw.planting_video3)
+
+        }
+
         // Your existing code for animation
 
         // Update the currentPowerPlantScore and workOutPoint values in the database
@@ -172,6 +181,37 @@ class PlantingTreeActivity : AppCompatActivity(){
                 // Handle database error
             }
         })
+
+        isAnimationPlaying = true
+
+        // Set up an AnimatorListener to listen for animation events
+        val animationListener = object : Animator.AnimatorListener {
+            override fun onAnimationStart(animation: Animator) {
+                // Animation started, perform actions here
+                // For example, you can interrupt the changes during the start
+            }
+
+            override fun onAnimationEnd(animation: Animator) {
+                // Animation ended, perform actions here
+                // For example, you can interrupt the changes during the end
+                isAnimationPlaying = false
+            }
+
+            override fun onAnimationCancel(animation: Animator) {
+                // Animation cancelled, perform actions here if needed
+                isAnimationPlaying = false
+            }
+
+            override fun onAnimationRepeat(animation: Animator) {
+                // Animation repeated, perform actions here if needed
+            }
+        }
+
+        // Set the animation listener to the LottieAnimationView
+        binding.plantingVideo.addAnimatorListener(animationListener)
+
+        // Start the animation
+        binding.plantingVideo.playAnimation()
 
     }
 
