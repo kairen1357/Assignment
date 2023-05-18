@@ -19,11 +19,13 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import android.util.Log
+
 
 class PlantingTreeActivity : AppCompatActivity(){
 
     lateinit var binding : PlantingTreeBinding
-    var username = "hoeleong20" // Replace with the actual username FirebaseAuth.getInstance().currentUser?.uid.toString()
+    var username ="abc123"
     var workOutPoint=0
     var powerPlantScore=0
     var powerPlantPointUsedPerClick=100
@@ -41,9 +43,18 @@ class PlantingTreeActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState)
         binding=PlantingTreeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        //get username
+
+//        getUsername()
+
+        //initialize
+
         binding.currentUserTotalContributedText.isClickable=currentUserPowerPlantScoreClickable
         getWorkOutPoint()
         FirebaseApp.initializeApp(this)
+
+
 
         //trigger planting action
         binding.workOutPointTextField.text="$workOutPoint / 100"
@@ -297,6 +308,24 @@ class PlantingTreeActivity : AppCompatActivity(){
                 // Handle database error
             }
         })
+    }
+
+    private fun getUsername(){
+        val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+        var databaseRef = FirebaseDatabase.getInstance().reference.child("SignupUsers").child(uid)
+        databaseRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val userData = dataSnapshot.value as? HashMap<String, Any>
+                if (userData != null) {
+                    username = userData["username"].toString()
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle the error
+            }
+        })
+
     }
 
 

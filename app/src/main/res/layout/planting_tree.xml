@@ -215,10 +215,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/leaderboard_stage"
-                app:layout_constraintVertical_bias="1.0"
                 tools:layout_editor_absoluteX="16dp"
                 tools:listitem="@layout/leaderboard_user_item" />
 
